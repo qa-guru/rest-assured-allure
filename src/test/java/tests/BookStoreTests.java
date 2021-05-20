@@ -1,6 +1,8 @@
 package tests;
 
 import io.qameta.allure.restassured.AllureRestAssured;
+import io.restassured.response.Response;
+import models.AuthorizationResponse;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -9,6 +11,7 @@ import java.util.Map;
 import static filters.CustomLogFilter.customLogFilter;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 
 public class BookStoreTests {
@@ -76,7 +79,6 @@ public class BookStoreTests {
                 .body("result", is("User authorized successfully."));
     }
 
-
     @Test
     void withCustomFilterTest() {
         given()
@@ -91,6 +93,44 @@ public class BookStoreTests {
                 .log().body()
                 .body("status", is("Success"))
                 .body("result", is("User authorized successfully."));
+    }
+
+    @Test
+    void withAssertJTest() {
+        String response =
+        given()
+                .filter(customLogFilter().withCustomTemplates())
+                .contentType(JSON)
+                .body("{ \"userName\": \"alex\", \"password\": \"asdsad#frew_DFS2\" }")
+                .when()
+                .log().uri()
+                .log().body()
+                .post("https://demoqa.com/Account/v1/GenerateToken")
+                .then()
+                .log().body()
+                .extract().asString();
+
+        assertThat(response).contains("\"status\":\"Success\"");
+        assertThat(response).contains("\"result\":\"User authorized successfully.\"");
+    }
+
+    @Test
+    void withModelTest() {
+        AuthorizationResponse response =
+        given()
+                .filter(customLogFilter().withCustomTemplates())
+                .contentType(JSON)
+                .body("{ \"userName\": \"alex\", \"password\": \"asdsad#frew_DFS2\" }")
+                .when()
+                .log().uri()
+                .log().body()
+                .post("https://demoqa.com/Account/v1/GenerateToken")
+                .then()
+                .log().body()
+                .extract().as(AuthorizationResponse.class);
+
+        assertThat(response.getStatus()).isEqualTo("Success");
+        assertThat(response.getResult()).isEqualTo("User authorized successfully.");
     }
 
 
