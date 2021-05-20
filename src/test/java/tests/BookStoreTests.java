@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static filters.CustomLogFilter.customLogFilter;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.*;
@@ -63,6 +64,23 @@ public class BookStoreTests {
     void withAllureListenerTest() {
         given()
                 .filter(new AllureRestAssured())
+                .contentType(JSON)
+                .body("{ \"userName\": \"alex\", \"password\": \"asdsad#frew_DFS2\" }")
+                .when()
+                .log().uri()
+                .log().body()
+                .post("https://demoqa.com/Account/v1/GenerateToken")
+                .then()
+                .log().body()
+                .body("status", is("Success"))
+                .body("result", is("User authorized successfully."));
+    }
+
+
+    @Test
+    void withCustomFilterTest() {
+        given()
+                .filter(customLogFilter().withCustomTemplates())
                 .contentType(JSON)
                 .body("{ \"userName\": \"alex\", \"password\": \"asdsad#frew_DFS2\" }")
                 .when()
