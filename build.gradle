@@ -23,6 +23,7 @@ allure {
 dependencies {
     testImplementation(
             "io.rest-assured:rest-assured:4.3.1",
+            "io.rest-assured:json-schema-validator:4.3.1",
             "io.qameta.allure:allure-rest-assured:$allureVersion",
             "com.fasterxml.jackson.core:jackson-annotations:2.10.3",
             "org.assertj:assertj-core:3.19.0",
