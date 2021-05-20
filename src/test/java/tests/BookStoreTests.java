@@ -3,6 +3,7 @@ package tests;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.response.Response;
 import models.AuthorizationResponse;
+import models.Books;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -128,10 +129,29 @@ public class BookStoreTests {
                 .then()
                 .log().body()
                 .extract().as(AuthorizationResponse.class);
-
+        /*
+        {
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImFsZXgiLCJwYXNzd29yZCI6ImFzZHNhZCNmcmV3X0RGUzIiLCJpYXQiOjE2MjE1MzQ1NzJ9.IXZNuhKHg901sJXcCf66TKirqqaL0ATJXNRcj_14iDg",
+            "expires": "2021-05-27T18:16:12.901Z",
+            "status": "Success",
+            "result": "User authorized successfully."
+        }
+         */
         assertThat(response.getStatus()).isEqualTo("Success");
         assertThat(response.getResult()).isEqualTo("User authorized successfully.");
     }
 
 
+    @Test
+    void booksModelTest() {
+        Books books =
+        given()
+                .log().uri()
+                .log().body()
+                .get("https://demoqa.com/BookStore/v1/Books")
+                .then()
+                .log().body()
+                .extract().as(Books.class);
+        System.out.println(books);
+    }
 }
